@@ -1,0 +1,160 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'corretto'
+        java-version: '23'
+    - name: testGetAllStudents
+      id: testgetallstudents
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testGetAllStudents
+        setup-command: ''
+        command: mvn clean test -Dtest=Task2ApplicationTests#testGetAllStudents
+        timeout: 10
+        max-score: 1
+    - name: testGetStudentById
+      id: testgetstudentbyid
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testGetStudentById
+        setup-command: ''
+        command: mvn clean test -Dtest=Task2ApplicationTests#testGetStudentById
+        timeout: 10
+        max-score: 1
+    - name: testCreateStudent
+      id: testcreatestudent
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testCreateStudent
+        setup-command: ''
+        command: mvn clean test -Dtest=Task2ApplicationTests#testCreateStudent
+        timeout: 10
+        max-score: 1
+    - name: testUpdateStudent
+      id: testupdatestudent
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testUpdateStudent
+        setup-command: ''
+        command: mvn clean test -Dtest=Task2ApplicationTests#testUpdateStudent
+        timeout: 10
+        max-score: 1
+    - name: testDeleteStudent
+      id: testdeletestudent
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testDeleteStudent
+        setup-command: ''
+        command: mvn clean test -Dtest=Task2ApplicationTests#testDeleteStudent
+        timeout: 10
+        max-score: 1
+    - name: testGetStudentsByCourseId
+      id: testgetstudentsbycourseid
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testGetStudentsByCourseId
+        setup-command: ''
+        command: mvn clean test -Dtest=Task2ApplicationTests#testGetStudentsByCourseId
+        timeout: 10
+        max-score: 1
+    - name: testGetAllInstructors
+      id: testgetallinstructors
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testGetAllInstructors
+        setup-command: ''
+        command: mvn clean test -Dtest=Task2ApplicationTests#testGetAllInstructors
+        timeout: 10
+        max-score: 1
+    - name: testGetInstructorByEmail
+      id: testgetinstructorbyemail
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testGetInstructorByEmail
+        setup-command: ''
+        command: mvn clean test -Dtest=Task2ApplicationTests#testGetInstructorByEmail
+        timeout: 10
+        max-score: 1
+    - name: testGetAllCourses
+      id: testgetallcourses
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testGetAllCourses
+        setup-command: ''
+        command: mvn clean test -Dtest=Task2ApplicationTests#testGetAllCourses
+        timeout: 10
+        max-score: 1
+    - name: testGetCoursesByInstructor
+      id: testgetcoursesbyinstructor
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testGetCoursesByInstructor
+        setup-command: ''
+        command: mvn clean test -Dtest=Task2ApplicationTests#testGetCoursesByInstructor
+        timeout: 10
+        max-score: 1
+    - name: testEnrollStudentInCourse
+      id: testenrollstudentincourse
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testEnrollStudentInCourse
+        setup-command: ''
+        command: mvn clean test -Dtest=Task2ApplicationTests#testEnrollStudentInCourse
+        timeout: 10
+        max-score: 1
+    - name: testUnenrollStudentFromCourse
+      id: testunenrollstudentfromcourse
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testUnenrollStudentFromCourse
+        setup-command: ''
+        command: mvn clean test -Dtest=Task2ApplicationTests#testUnenrollStudentFromCourse
+        timeout: 10
+        max-score: 1
+    - name: Docker Compose
+      id: docker-compose
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Docker Compose
+        setup-command: 'mvn clean install -DskipTests && docker compose up --build
+          -d && sleep 30 && curl -H "Content-Type: application/json" -d ''{"name":
+          "Github Student", "email": "student@github.com"}'' http://localhost:8080/students'
+        command: curl http://localhost:8080/students/1
+        input: ''
+        expected-output: student@github.com
+        comparison-method: contains
+        timeout: 10
+        max-score: 3
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TESTGETALLSTUDENTS_RESULTS: "${{steps.testgetallstudents.outputs.result}}"
+        TESTGETSTUDENTBYID_RESULTS: "${{steps.testgetstudentbyid.outputs.result}}"
+        TESTCREATESTUDENT_RESULTS: "${{steps.testcreatestudent.outputs.result}}"
+        TESTUPDATESTUDENT_RESULTS: "${{steps.testupdatestudent.outputs.result}}"
+        TESTDELETESTUDENT_RESULTS: "${{steps.testdeletestudent.outputs.result}}"
+        TESTGETSTUDENTSBYCOURSEID_RESULTS: "${{steps.testgetstudentsbycourseid.outputs.result}}"
+        TESTGETALLINSTRUCTORS_RESULTS: "${{steps.testgetallinstructors.outputs.result}}"
+        TESTGETINSTRUCTORBYEMAIL_RESULTS: "${{steps.testgetinstructorbyemail.outputs.result}}"
+        TESTGETALLCOURSES_RESULTS: "${{steps.testgetallcourses.outputs.result}}"
+        TESTGETCOURSESBYINSTRUCTOR_RESULTS: "${{steps.testgetcoursesbyinstructor.outputs.result}}"
+        TESTENROLLSTUDENTINCOURSE_RESULTS: "${{steps.testenrollstudentincourse.outputs.result}}"
+        TESTUNENROLLSTUDENTFROMCOURSE_RESULTS: "${{steps.testunenrollstudentfromcourse.outputs.result}}"
+        DOCKER-COMPOSE_RESULTS: "${{steps.docker-compose.outputs.result}}"
+      with:
+        runners: testgetallstudents,testgetstudentbyid,testcreatestudent,testupdatestudent,testdeletestudent,testgetstudentsbycourseid,testgetallinstructors,testgetinstructorbyemail,testgetallcourses,testgetcoursesbyinstructor,testenrollstudentincourse,testunenrollstudentfromcourse,docker-compose
